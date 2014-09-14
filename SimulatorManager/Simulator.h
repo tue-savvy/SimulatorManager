@@ -2,7 +2,7 @@
 //  Simulator.h
 //  SimulatorManager
 //
-//  Created by Sky Dev on 9/13/14.
+//  Created by Tue Nguyen on 9/13/14.
 //  Copyright (c) 2014 Pharaoh. All rights reserved.
 //
 

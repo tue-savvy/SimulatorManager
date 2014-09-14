@@ -98,6 +98,11 @@
         menuItem.action = @selector(openSimulatorApp:);
         [m addItem:menuItem];
     }
+    if (apps.count == 0) {
+        NSMenuItem* menuItem = [[NSMenuItem alloc] init];
+        [menuItem setTitle:@"No App"];
+        [m addItem:menuItem];
+    }
 }
 
 - (void)openSimulatorApp:(NSMenuItem *)menuItem {
