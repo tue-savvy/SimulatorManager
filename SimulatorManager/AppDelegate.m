@@ -104,15 +104,22 @@
     }
 }
 - (void)buildApplicationMenu:(NSArray *)apps addToMenu:(NSMenu *)m simulator:(Simulator *)simulator {
+    NSFileManager *fileManager = [NSFileManager defaultManager];
     
-    NSMenuItem* menuItem = [[NSMenuItem alloc] init];
-    [menuItem setTitle:@"App Data Folder"];
-    [menuItem setRepresentedObject:simulator];
-    menuItem.target = self;
-    menuItem.action = @selector(openSimulatorDataFolder:);
-    [m addItem:menuItem];
-    NSMenuItem *separator = [NSMenuItem separatorItem];
-    [m addItem:separator];
+    {
+        NSMenuItem* menuItem = [[NSMenuItem alloc] init];
+        [menuItem setTitle:@"App Data Folder"];
+        [menuItem setRepresentedObject:simulator];
+        menuItem.target = self;
+        menuItem.action = @selector(openSimulatorDataFolder:);
+        [m addItem:menuItem];
+        NSMenuItem *separator = [NSMenuItem separatorItem];
+        [m addItem:separator];
+        NSString *dataPath = [simulator appDataPath:nil];
+        if (![fileManager fileExistsAtPath:dataPath]) {
+            menuItem.image  = [NSImage imageNamed:@"Warning"];
+        }
+    }
     
     apps = [apps sortedArrayUsingDescriptors:@[[NSSortDescriptor sortDescriptorWithKey:@"name" ascending:YES selector:@selector(caseInsensitiveCompare:)]]];
     for (SimulatorApp *app in apps) {
@@ -123,6 +130,11 @@
         menuItem.target = self;
         menuItem.action = @selector(openSimulatorApp:);
         [m addItem:menuItem];
+        NSString *dataPath = [app dataPath];
+        if (![fileManager fileExistsAtPath:dataPath]) {
+            menuItem.image  = [NSImage imageNamed:@"Warning"];
+        }
+        
     }
     
     if (apps.count == 0) {
