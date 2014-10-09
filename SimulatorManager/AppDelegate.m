@@ -82,13 +82,17 @@
         NSMenu* subMenu = [[NSMenu alloc] init];
         NSMenuItem* menuItem = [[NSMenuItem alloc] init];
         [menuItem setRepresentedObject:simulator];
-        [menuItem setTitle:simulator.name];
+        [menuItem setTitle:[simulator.name stringByAppendingFormat:@" (%@)", simulator.runtimeVersion]];
         [menuItem setSubmenu:subMenu];
         [m insertItem:menuItem atIndex:menuIndex];
         [self buildApplicationMenu:[simulator applications] addToMenu:subMenu];
     }
 }
 - (void)buildApplicationMenu:(NSArray *)apps addToMenu:(NSMenu *)m {
+    NSMenuItem* menuItem = [[NSMenuItem alloc] init];
+    [menuItem setTitle:@"Applications"];
+    [m addItem:menuItem];
+    
     for (SimulatorApp *app in apps) {
         NSMenuItem* menuItem = [[NSMenuItem alloc] init];
         [menuItem setRepresentedObject:app];
@@ -98,6 +102,7 @@
         menuItem.action = @selector(openSimulatorApp:);
         [m addItem:menuItem];
     }
+    
     if (apps.count == 0) {
         NSMenuItem* menuItem = [[NSMenuItem alloc] init];
         [menuItem setTitle:@"No App"];

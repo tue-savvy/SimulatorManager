@@ -73,4 +73,10 @@
     }
     return nil;
 }
+- (NSString *)runtimeVersion {
+    NSString *version = [self.runtime stringByReplacingOccurrencesOfString:@"com.apple.CoreSimulator.SimRuntime." withString:@""];
+    version = [version stringByReplacingOccurrencesOfString:@"iOS-" withString:@"iOS "];
+    version = [version stringByReplacingOccurrencesOfString:@"-" withString:@"."];
+    return version;
+}
 @end

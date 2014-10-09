@@ -23,4 +23,5 @@
 - (NSArray *)applications;
 
 - (NSString *)appDataPath:(SimulatorApp *)app;
+- (NSString *)runtimeVersion;
 @end
