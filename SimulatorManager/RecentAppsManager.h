@@ -7,6 +7,9 @@
 //
 
 #import <Foundation/Foundation.h>
+
+FOUNDATION_EXPORT NSString *const RecentAppUpdateNotification;
+
 @class Simulator;
 @class SimulatorApp;
 @interface RecentAppsManager : NSObject

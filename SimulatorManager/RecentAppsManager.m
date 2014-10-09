@@ -12,6 +12,11 @@
 
 #define RecentAppsKey @"RecentApps"
 #define MAX_RECENT    5
+
+
+NSString *const RecentAppUpdateNotification = @"RecentAppUpdateNotification";
+
+
 @interface RecentAppsManager()
 @property (nonatomic, strong) NSMutableArray *recentData;
 @property (nonatomic, strong) NSMutableArray *recentSimulatorApps;
@@ -46,6 +51,8 @@
     NSInteger index = 0;
     for (NSDictionary *recentDict in self.recentData) {
         if ([recentDict[@"SimulatorPath"] isEqual:simulatorPath] && [recentDict[@"AppPath"] isEqual:appPath]) {
+            if (index == 0) return;
+            
             //move recent to first position
             [self.recentData removeObject:recentDict];
             [self.recentData insertObject:recentDict atIndex:0];
@@ -56,6 +63,7 @@
             
             [[NSUserDefaults standardUserDefaults] setObject:self.recentData forKey:RecentAppsKey];
             [[NSUserDefaults standardUserDefaults] synchronize];
+            [[NSNotificationCenter defaultCenter] postNotificationName:RecentAppUpdateNotification object:self];
             return;
         }
         index++;
@@ -75,6 +83,8 @@
     
     [[NSUserDefaults standardUserDefaults] setObject:self.recentData forKey:RecentAppsKey];
     [[NSUserDefaults standardUserDefaults] synchronize];
+    
+    [[NSNotificationCenter defaultCenter] postNotificationName:RecentAppUpdateNotification object:self];
     
 }
 
