@@ -54,7 +54,7 @@
             [self.recentSimulatorApps removeObjectAtIndex:index];
             [self.recentSimulatorApps addObject:app];
             
-            [[NSUserDefaults standardUserDefaults] setObject:recentDict forKey:RecentAppsKey];
+            [[NSUserDefaults standardUserDefaults] setObject:self.recentData forKey:RecentAppsKey];
             [[NSUserDefaults standardUserDefaults] synchronize];
             return;
         }
