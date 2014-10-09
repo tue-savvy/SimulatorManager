@@ -13,7 +13,7 @@
 @property (nonatomic, strong) NSString *path;
 @property (nonatomic, strong) NSImage *appIcon;
 @property (nonatomic, strong) NSString *bundleID;
-@property (nonatomic, weak) Simulator *simulator;
+@property (nonatomic, strong) Simulator *simulator;
 
 - (instancetype)initWithPath:(NSString *)path simulator:(Simulator *)simulator;
 

@@ -21,7 +21,6 @@
 - (instancetype)initWithPath:(NSString *)path;
 
 - (NSArray *)applications;
-
 - (NSString *)appDataPath:(SimulatorApp *)app;
 - (NSString *)runtimeVersion;
 @end

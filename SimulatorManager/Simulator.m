@@ -57,6 +57,8 @@
 
 - (NSString *)appDataPath:(SimulatorApp *)app {
     NSString *dataFolder = [self.path stringByAppendingPathComponent:@"data/Containers/Data/Application"];
+    if (!app) return dataFolder;
+    
     NSString *bundleID = app.bundleID;
     
     NSFileManager *fm = [NSFileManager defaultManager];

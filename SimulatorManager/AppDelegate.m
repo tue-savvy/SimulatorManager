@@ -5,10 +5,13 @@
 
 #import "AppDelegate.h"
 #import "Simulator.h"
+#import "RecentAppsManager.h"
 @interface AppDelegate()
 @property (nonatomic, strong) NSMutableArray *simulators;
 @property (weak) IBOutlet NSMenuItem *launchAtLoginMenuItem;
 @property (nonatomic, strong) NSDate *lastModDate;
+@property (nonatomic, strong) RecentAppsManager *recentManager;
+@property (assign, nonatomic) BOOL recentAppUpdate;
 @end
 @implementation AppDelegate
 
@@ -19,6 +22,8 @@
 }
 
 - (void) awakeFromNib {
+    self.recentManager = [RecentAppsManager new];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(recentAppUpdate:) name:RecentAppUpdateNotification object:self.recentManager];
     // Create the status bar item
     statusItem = [[NSStatusBar systemStatusBar] statusItemWithLength:25.0];
     [statusItem setMenu:menu];
@@ -39,11 +44,14 @@
 }
 - (BOOL)needUpdateMenu {
     NSDate *currentModDate = [self getMTimeFor:[self simulatorDevicesDirectory]];
-    if (!self.lastModDate || [self.lastModDate compare:currentModDate] != NSOrderedSame) {
+    if (!self.lastModDate || [self.lastModDate compare:currentModDate] != NSOrderedSame || self.recentAppUpdate) {
         self.lastModDate = currentModDate;
         return YES;
     }
     return NO;
+}
+- (void)recentAppUpdate:(NSNotification *)notification {
+    self.recentAppUpdate = YES;
 }
 - (void)menuWillOpen:(NSMenu *)menu {
     // Check when the config was last modified
@@ -58,6 +66,8 @@
     for (int i=0;i<n-4;i++) {
         [menu removeItemAtIndex:0];
     }
+    
+    
     
     //Load Simulator
     NSFileManager *fm = [NSFileManager defaultManager];
@@ -74,6 +84,9 @@
     self.simulators = simulators;
     [self.simulators sortUsingDescriptors:@[[NSSortDescriptor sortDescriptorWithKey:@"name" ascending:YES]]];
     [self buildMenuForSimulator:self.simulators addToMenu:menu];
+    
+    //Load recent app
+    [self buildMenuForRecentsAddToMenu:menu];
 }
 
 - (void)buildMenuForSimulator:(NSArray *)simulatorArray addToMenu:(NSMenu *)m {
@@ -84,15 +97,24 @@
         [menuItem setRepresentedObject:simulator];
         [menuItem setTitle:[simulator.name stringByAppendingFormat:@" (%@)", simulator.runtimeVersion]];
         [menuItem setSubmenu:subMenu];
+        menuItem.target = self;
+        menuItem.action = @selector(openSimulatorFolder:);
         [m insertItem:menuItem atIndex:menuIndex];
-        [self buildApplicationMenu:[simulator applications] addToMenu:subMenu];
+        [self buildApplicationMenu:[simulator applications] addToMenu:subMenu simulator:simulator];
     }
 }
-- (void)buildApplicationMenu:(NSArray *)apps addToMenu:(NSMenu *)m {
-    NSMenuItem* menuItem = [[NSMenuItem alloc] init];
-    [menuItem setTitle:@"Applications"];
-    [m addItem:menuItem];
+- (void)buildApplicationMenu:(NSArray *)apps addToMenu:(NSMenu *)m simulator:(Simulator *)simulator {
     
+    NSMenuItem* menuItem = [[NSMenuItem alloc] init];
+    [menuItem setTitle:@"App Data Folder"];
+    [menuItem setRepresentedObject:simulator];
+    menuItem.target = self;
+    menuItem.action = @selector(openSimulatorDataFolder:);
+    [m addItem:menuItem];
+    NSMenuItem *separator = [NSMenuItem separatorItem];
+    [m addItem:separator];
+    
+    apps = [apps sortedArrayUsingDescriptors:@[[NSSortDescriptor sortDescriptorWithKey:@"name" ascending:YES selector:@selector(caseInsensitiveCompare:)]]];
     for (SimulatorApp *app in apps) {
         NSMenuItem* menuItem = [[NSMenuItem alloc] init];
         [menuItem setRepresentedObject:app];
@@ -110,18 +132,59 @@
     }
 }
 
+- (void)buildMenuForRecentsAddToMenu:(NSMenu *)m {
+    self.recentAppUpdate = NO;
+    
+    NSInteger menuIndex = 0;
+    NSMenuItem* menuItem = [[NSMenuItem alloc] init];
+    [menuItem setEnabled:NO];
+    [menuItem setTitle:@"Recent Apps"];
+    [m insertItem:menuItem atIndex:menuIndex++];
+    
+    NSArray *recentApps = [self.recentManager recentApps];
+    
+    for (SimulatorApp *app in recentApps) {
+        NSMenuItem* menuItem = [[NSMenuItem alloc] init];
+        [menuItem setRepresentedObject:app];
+        [menuItem setTitle:app.name?:@"<Unknown>"];
+        [menuItem setRepresentedObject:app];
+        menuItem.target = self;
+        menuItem.action = @selector(openSimulatorApp:);
+        [m insertItem:menuItem atIndex:menuIndex++];
+    }
+    
+    if (recentApps.count == 0) {
+        NSMenuItem* menuItem = [[NSMenuItem alloc] init];
+        [menuItem setTitle:@"No Recent"];
+        [menuItem setEnabled:NO];
+        [m insertItem:menuItem atIndex:menuIndex++];
+    }
+    
+    //Add Separator
+    [m insertItem:[NSMenuItem separatorItem] atIndex:menuIndex++];
+}
+
 - (void)openSimulatorApp:(NSMenuItem *)menuItem {
     SimulatorApp *simulatorApp = menuItem.representedObject;
     NSString *appDataPath = simulatorApp.dataPath;
     if (appDataPath) {
         [[NSWorkspace sharedWorkspace] openURL:[NSURL fileURLWithPath:appDataPath]];
+        [self.recentManager addRecentApp:simulatorApp];
     } else {
         NSAlert *alert = [NSAlert alertWithMessageText:@"Simulator Manager" defaultButton:@"Close" alternateButton:nil otherButton:nil informativeTextWithFormat:@"Cannot find data folder for the app '%@'", simulatorApp.name];
         [alert runModal];
     }
 }
 
+- (void)openSimulatorFolder:(NSMenuItem *)menuItem {
+    Simulator *simulator = menuItem.representedObject;
+    [[NSWorkspace sharedWorkspace] openURL:[NSURL fileURLWithPath:simulator.path]];
+}
 
+- (void)openSimulatorDataFolder:(NSMenuItem *)menuItem {
+    Simulator *simulator = menuItem.representedObject;
+    [[NSWorkspace sharedWorkspace] openURL:[NSURL fileURLWithPath:[simulator appDataPath:nil]]];
+}
 - (IBAction)launchAtLogin:(id)sender {
     NSMenuItem *menuItem = sender;
     if (menuItem.state == NSOffState) menuItem.state = NSOnState;
