@@ -151,6 +151,7 @@
     if (recentApps.count == 0) {
         NSMenuItem* menuItem = [[NSMenuItem alloc] init];
         [menuItem setTitle:@"No Recent"];
+        [menuItem setEnabled:NO];
         [m insertItem:menuItem atIndex:menuIndex++];
     }
     
