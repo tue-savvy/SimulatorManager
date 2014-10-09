@@ -148,6 +148,12 @@
         [m insertItem:menuItem atIndex:menuIndex++];
     }
     
+    if (recentApps.count == 0) {
+        NSMenuItem* menuItem = [[NSMenuItem alloc] init];
+        [menuItem setTitle:@"No Recent"];
+        [m insertItem:menuItem atIndex:menuIndex++];
+    }
+    
     //Add Separator
     [m insertItem:[NSMenuItem separatorItem] atIndex:menuIndex++];
 }
