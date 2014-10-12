@@ -6,14 +6,24 @@
 #import "AppDelegate.h"
 #import "Simulator.h"
 #import "RecentAppsManager.h"
-@interface AppDelegate()
+@interface AppDelegate()<NSUserNotificationCenterDelegate>
+
 @property (nonatomic, strong) NSMutableArray *simulators;
 @property (weak) IBOutlet NSMenuItem *launchAtLoginMenuItem;
 @property (nonatomic, strong) NSDate *lastModDate;
 @property (nonatomic, strong) RecentAppsManager *recentManager;
 @property (assign, nonatomic) BOOL recentAppUpdate;
+@property (weak) IBOutlet NSMenuItem *eraseMenuItem;
+
 @end
 @implementation AppDelegate
+- (void)applicationDidFinishLaunching:(NSNotification *)notification {
+    [[NSUserNotificationCenter defaultUserNotificationCenter] setDelegate:self];
+}
+
+- (BOOL)userNotificationCenter:(NSUserNotificationCenter *)center shouldPresentNotification:(NSUserNotification *)notification{
+    return YES;
+}
 
 - (NSString *)simulatorDevicesDirectory {
     NSArray *array = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES);
@@ -63,7 +73,7 @@
 - (void) loadMenu {
     // Clear out the hosts so we can start over
     NSUInteger n = [[menu itemArray] count];
-    for (int i=0;i<n-4;i++) {
+    for (int i=0;i<n-6;i++) {
         [menu removeItemAtIndex:0];
     }
     
@@ -197,6 +207,45 @@
     Simulator *simulator = menuItem.representedObject;
     [[NSWorkspace sharedWorkspace] openURL:[NSURL fileURLWithPath:[simulator appDataPath:nil]]];
 }
+- (IBAction)eraseAllSimulators:(id)sender {
+    NSAlert *alert = [[NSAlert alloc] init];
+    alert.messageText = @"Are you sure you want to reset content and settings from all iOS Simulators?";
+    alert.informativeText = @"All installed applications, content, and settings will be erased.\n\nPlease quit running Simulator before continue.";
+    
+    alert.alertStyle = NSWarningAlertStyle;
+    
+    [alert addButtonWithTitle:@"Reset"];
+    [alert addButtonWithTitle:@"Don't Reset"];
+    
+    NSInteger result = [alert runModal];
+    if (result == NSAlertFirstButtonReturn) {
+        [self performEraseSimulators];
+    }
+}
+- (void)performEraseSimulators {
+    NSUserNotification *notification = [[NSUserNotification alloc] init];
+    notification.title = @"Simulator Manager";
+    notification.informativeText = @"Erasing Simulator...";
+    [self.eraseMenuItem setEnabled:NO];
+    [[NSUserNotificationCenter defaultUserNotificationCenter] deliverNotification:notification];
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        NSString *commandPath = [[NSBundle mainBundle] pathForResource:@"SimulatorErase" ofType:@"sh"];
+        
+        for (Simulator *simulator in self.simulators) {
+            NSTask *eraseTask = [[NSTask alloc] init];
+            [eraseTask setLaunchPath:commandPath];
+            [eraseTask setArguments:@[simulator.UDID]];
+            [eraseTask launch];
+            [eraseTask waitUntilExit];
+        }
+        dispatch_async(dispatch_get_main_queue(), ^{
+            notification.informativeText = @"All Simulators are erased";
+            [[NSUserNotificationCenter defaultUserNotificationCenter] deliverNotification:notification];
+            [self.eraseMenuItem setEnabled:YES];
+        });
+    });
+}
+
 - (IBAction)launchAtLogin:(id)sender {
     NSMenuItem *menuItem = sender;
     if (menuItem.state == NSOffState) menuItem.state = NSOnState;

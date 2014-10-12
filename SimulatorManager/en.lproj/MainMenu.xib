@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <archive type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="8.00">
 	<data>
-		<int key="IBDocument.SystemTarget">1070</int>
-		<string key="IBDocument.SystemVersion">14A343f</string>
+		<int key="IBDocument.SystemTarget">1080</int>
+		<string key="IBDocument.SystemVersion">14A388a</string>
 		<string key="IBDocument.InterfaceBuilderVersion">6245</string>
-		<string key="IBDocument.AppKitVersion">1334</string>
-		<string key="IBDocument.HIToolboxVersion">751.00</string>
+		<string key="IBDocument.AppKitVersion">1343.14</string>
+		<string key="IBDocument.HIToolboxVersion">755.00</string>
 		<object class="NSMutableDictionary" key="IBDocument.PluginVersions">
 			<string key="NS.key.0">com.apple.InterfaceBuilder.CocoaPlugin</string>
 			<string key="NS.object.0">6245</string>
@@ -99,6 +99,24 @@
 			<object class="NSMenu" id="862705665">
 				<string key="NSTitle"/>
 				<array class="NSMutableArray" key="NSMenuItems">
+					<object class="NSMenuItem" id="1064529420">
+						<reference key="NSMenu" ref="862705665"/>
+						<bool key="NSIsDisabled">YES</bool>
+						<bool key="NSIsSeparator">YES</bool>
+						<string key="NSTitle"/>
+						<string key="NSKeyEquiv"/>
+						<int key="NSMnemonicLoc">2147483647</int>
+						<reference key="NSOnImage" ref="35465992"/>
+						<reference key="NSMixedImage" ref="502551668"/>
+					</object>
+					<object class="NSMenuItem" id="796561994">
+						<reference key="NSMenu" ref="862705665"/>
+						<string key="NSTitle">Erase All Simulators</string>
+						<string key="NSKeyEquiv"/>
+						<int key="NSMnemonicLoc">2147483647</int>
+						<reference key="NSOnImage" ref="35465992"/>
+						<reference key="NSMixedImage" ref="502551668"/>
+					</object>
 					<object class="NSMenuItem" id="1029632860">
 						<reference key="NSMenu" ref="862705665"/>
 						<bool key="NSIsDisabled">YES</bool>
@@ -198,6 +216,14 @@
 					<int key="connectionID">659</int>
 				</object>
 				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">eraseAllSimulators:</string>
+						<reference key="source" ref="1014"/>
+						<reference key="destination" ref="796561994"/>
+					</object>
+					<int key="connectionID">663</int>
+				</object>
+				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
 						<string key="label">menu</string>
 						<reference key="source" ref="976324537"/>
@@ -244,6 +270,14 @@
 						<reference key="destination" ref="605965567"/>
 					</object>
 					<int key="connectionID">660</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">eraseMenuItem</string>
+						<reference key="source" ref="976324537"/>
+						<reference key="destination" ref="796561994"/>
+					</object>
+					<int key="connectionID">664</int>
 				</object>
 			</array>
 			<object class="IBMutableOrderedSet" key="objectRecords">
@@ -331,6 +365,8 @@
 							<reference ref="630128020"/>
 							<reference ref="116792579"/>
 							<reference ref="605965567"/>
+							<reference ref="796561994"/>
+							<reference ref="1064529420"/>
 						</array>
 						<reference key="parent" ref="0"/>
 					</object>
@@ -370,6 +406,17 @@
 						<reference key="parent" ref="862705665"/>
 						<string key="objectName">Launch At Login</string>
 					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">661</int>
+						<reference key="object" ref="796561994"/>
+						<reference key="parent" ref="862705665"/>
+						<string key="objectName">Erase All Simulators</string>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">662</int>
+						<reference key="object" ref="1064529420"/>
+						<reference key="parent" ref="862705665"/>
+					</object>
 				</array>
 			</object>
 			<dictionary class="NSMutableDictionary" key="flattenedProperties">
@@ -392,12 +439,14 @@
 				<string key="649.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 				<string key="652.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 				<string key="658.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
+				<string key="661.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
+				<string key="662.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 			</dictionary>
 			<dictionary class="NSMutableDictionary" key="unlocalizedProperties"/>
 			<nil key="activeLocalization"/>
 			<dictionary class="NSMutableDictionary" key="localizations"/>
 			<nil key="sourceID"/>
-			<int key="maxID">660</int>
+			<int key="maxID">664</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<array class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -420,19 +469,22 @@
 					</dictionary>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">../Shuttle/AppDelegate.h</string>
+						<string key="minorKey">../SimulatorManager/AppDelegate.h</string>
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">
 					<string key="className">AppDelegate</string>
 					<dictionary class="NSMutableDictionary" key="actions">
+						<string key="eraseAllSimulators:">id</string>
 						<string key="launchAtLogin:">id</string>
 						<string key="quit:">id</string>
 						<string key="showAbout:">id</string>
-						<string key="showExportPanel:">id</string>
-						<string key="showImportPanel:">id</string>
 					</dictionary>
 					<dictionary class="NSMutableDictionary" key="actionInfosByName">
+						<object class="IBActionInfo" key="eraseAllSimulators:">
+							<string key="name">eraseAllSimulators:</string>
+							<string key="candidateClassName">id</string>
+						</object>
 						<object class="IBActionInfo" key="launchAtLogin:">
 							<string key="name">launchAtLogin:</string>
 							<string key="candidateClassName">id</string>
@@ -445,29 +497,24 @@
 							<string key="name">showAbout:</string>
 							<string key="candidateClassName">id</string>
 						</object>
-						<object class="IBActionInfo" key="showExportPanel:">
-							<string key="name">showExportPanel:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-						<object class="IBActionInfo" key="showImportPanel:">
-							<string key="name">showImportPanel:</string>
-							<string key="candidateClassName">id</string>
-						</object>
 					</dictionary>
-					<object class="NSMutableDictionary" key="outlets">
-						<string key="NS.key.0">launchAtLoginMenuItem</string>
-						<string key="NS.object.0">NSMenuItem</string>
-					</object>
-					<object class="NSMutableDictionary" key="toOneOutletInfosByName">
-						<string key="NS.key.0">launchAtLoginMenuItem</string>
-						<object class="IBToOneOutletInfo" key="NS.object.0">
+					<dictionary class="NSMutableDictionary" key="outlets">
+						<string key="eraseMenuItem">NSMenuItem</string>
+						<string key="launchAtLoginMenuItem">NSMenuItem</string>
+					</dictionary>
+					<dictionary class="NSMutableDictionary" key="toOneOutletInfosByName">
+						<object class="IBToOneOutletInfo" key="eraseMenuItem">
+							<string key="name">eraseMenuItem</string>
+							<string key="candidateClassName">NSMenuItem</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="launchAtLoginMenuItem">
 							<string key="name">launchAtLoginMenuItem</string>
 							<string key="candidateClassName">NSMenuItem</string>
 						</object>
-					</object>
+					</dictionary>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">../Shuttle/AppDelegate.m</string>
+						<string key="minorKey">../SimulatorManager/AppDelegate.m</string>
 					</object>
 				</object>
 			</array>
@@ -559,7 +606,7 @@
 		<bool key="IBDocument.previouslyAttemptedUpgradeToXcode5">NO</bool>
 		<object class="NSMutableDictionary" key="IBDocument.PluginDeclaredDependencyDefaults">
 			<string key="NS.key.0">com.apple.InterfaceBuilder.CocoaPlugin.macosx</string>
-			<real value="1070" key="NS.object.0"/>
+			<real value="1080" key="NS.object.0"/>
 		</object>
 		<object class="NSMutableDictionary" key="IBDocument.PluginDeclaredDevelopmentDependencies">
 			<string key="NS.key.0">com.apple.InterfaceBuilder.CocoaPlugin.InterfaceBuilder3</string>
