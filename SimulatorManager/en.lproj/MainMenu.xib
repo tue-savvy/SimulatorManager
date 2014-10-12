@@ -99,7 +99,7 @@
 			<object class="NSMenu" id="862705665">
 				<string key="NSTitle"/>
 				<array class="NSMutableArray" key="NSMenuItems">
-					<object class="NSMenuItem" id="1064529420">
+					<object class="NSMenuItem" id="158591610">
 						<reference key="NSMenu" ref="862705665"/>
 						<bool key="NSIsDisabled">YES</bool>
 						<bool key="NSIsSeparator">YES</bool>
@@ -109,9 +109,9 @@
 						<reference key="NSOnImage" ref="35465992"/>
 						<reference key="NSMixedImage" ref="502551668"/>
 					</object>
-					<object class="NSMenuItem" id="796561994">
+					<object class="NSMenuItem" id="547763140">
 						<reference key="NSMenu" ref="862705665"/>
-						<string key="NSTitle">Erase All Simulators</string>
+						<string key="NSTitle">Reset All Simulators</string>
 						<string key="NSKeyEquiv"/>
 						<int key="NSMnemonicLoc">2147483647</int>
 						<reference key="NSOnImage" ref="35465992"/>
@@ -219,7 +219,7 @@
 					<object class="IBActionConnection" key="connection">
 						<string key="label">eraseAllSimulators:</string>
 						<reference key="source" ref="1014"/>
-						<reference key="destination" ref="796561994"/>
+						<reference key="destination" ref="547763140"/>
 					</object>
 					<int key="connectionID">663</int>
 				</object>
@@ -275,7 +275,7 @@
 					<object class="IBOutletConnection" key="connection">
 						<string key="label">eraseMenuItem</string>
 						<reference key="source" ref="976324537"/>
-						<reference key="destination" ref="796561994"/>
+						<reference key="destination" ref="547763140"/>
 					</object>
 					<int key="connectionID">664</int>
 				</object>
@@ -365,8 +365,8 @@
 							<reference ref="630128020"/>
 							<reference ref="116792579"/>
 							<reference ref="605965567"/>
-							<reference ref="796561994"/>
-							<reference ref="1064529420"/>
+							<reference ref="547763140"/>
+							<reference ref="158591610"/>
 						</array>
 						<reference key="parent" ref="0"/>
 					</object>
@@ -408,13 +408,13 @@
 					</object>
 					<object class="IBObjectRecord">
 						<int key="objectID">661</int>
-						<reference key="object" ref="796561994"/>
+						<reference key="object" ref="547763140"/>
 						<reference key="parent" ref="862705665"/>
 						<string key="objectName">Erase All Simulators</string>
 					</object>
 					<object class="IBObjectRecord">
 						<int key="objectID">662</int>
-						<reference key="object" ref="1064529420"/>
+						<reference key="object" ref="158591610"/>
 						<reference key="parent" ref="862705665"/>
 					</object>
 				</array>
