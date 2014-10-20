@@ -38,8 +38,15 @@
     statusItem = [[NSStatusBar systemStatusBar] statusItemWithLength:25.0];
     [statusItem setMenu:menu];
     [statusItem setHighlightMode:YES];
-    [statusItem setImage:[NSImage imageNamed:@"StatusIcon"]];
-    [statusItem setAlternateImage:[NSImage imageNamed:@"StatusIconAlt"]];
+    
+    NSImage * image = [NSImage imageNamed:@"StatusIcon"];
+    [image setTemplate:YES];
+    NSImage * alternateImage = [NSImage imageNamed:@"StatusIconAlt"];
+    [alternateImage setTemplate:YES];
+    
+    [statusItem setImage:image];
+    [statusItem setAlternateImage:alternateImage];
+    
 
     launchAtLoginController = [[LaunchAtLoginController alloc] init];
     self.launchAtLoginMenuItem.state = launchAtLoginController.launchAtLogin ? NSOnState : NSOffState;
