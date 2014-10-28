@@ -125,14 +125,25 @@
         [menuItem setTitle:[simulator.name stringByAppendingFormat:@" (%@)", simulator.runtimeVersion]];
         [menuItem setSubmenu:subMenu];
         menuItem.target = self;
-        menuItem.action = @selector(openSimulatorFolder:);
+        menuItem.action = nil;//@selector(openSimulatorFolder:);
         [m insertItem:menuItem atIndex:menuIndex];
         [self buildApplicationMenu:[simulator applications] addToMenu:subMenu simulator:simulator];
     }
 }
 - (void)buildApplicationMenu:(NSArray *)apps addToMenu:(NSMenu *)m simulator:(Simulator *)simulator {
     NSFileManager *fileManager = [NSFileManager defaultManager];
-    
+  
+  NSMenuItem* menuItem = [[NSMenuItem alloc] init];
+  [menuItem setTitle:@"Simulator Folder"];
+  [menuItem setRepresentedObject:simulator];
+  menuItem.target = self;
+  menuItem.action = @selector(openSimulatorFolder:);
+  [m addItem:menuItem];
+  NSString *rootPath = simulator.path;
+  if (![fileManager fileExistsAtPath:rootPath]) {
+    menuItem.image  = [NSImage imageNamed:@"warning"];
+  }
+  
     {
         NSMenuItem* menuItem = [[NSMenuItem alloc] init];
         [menuItem setTitle:@"App Data Folder"];
@@ -144,7 +155,7 @@
         [m addItem:separator];
         NSString *dataPath = [simulator appDataPath:nil];
         if (![fileManager fileExistsAtPath:dataPath]) {
-            menuItem.image  = [NSImage imageNamed:@"Warning"];
+            menuItem.image  = [NSImage imageNamed:@"warning"];
         }
     }
     
@@ -159,7 +170,7 @@
         [m addItem:menuItem];
         NSString *dataPath = [app dataPath];
         if (![fileManager fileExistsAtPath:dataPath]) {
-            menuItem.image  = [NSImage imageNamed:@"Warning"];
+            menuItem.image  = [NSImage imageNamed:@"warning"];
         }
         
     }
