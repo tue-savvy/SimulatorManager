@@ -15,6 +15,9 @@
 @property (assign, nonatomic) BOOL recentAppUpdate;
 @property (weak) IBOutlet NSMenuItem *eraseMenuItem;
 
+@property (nonatomic, assign) BOOL recentAppDisabled;
+@property (nonatomic, weak) IBOutlet NSMenuItem *recentAppMenuItem;
+
 @end
 @implementation AppDelegate
 - (void)applicationDidFinishLaunching:(NSNotification *)notification {
@@ -46,7 +49,12 @@
     
     [statusItem setImage:image];
     [statusItem setAlternateImage:alternateImage];
-    
+  
+    self.recentAppDisabled = [[NSUserDefaults standardUserDefaults] boolForKey:RecentAppsOnKey];
+    if (self.recentAppDisabled)
+      self.recentAppMenuItem.title = @"Enable Recent Apps";
+    else
+      self.recentAppMenuItem.title = @"Disable Recent Apps";
 
     launchAtLoginController = [[LaunchAtLoginController alloc] init];
     self.launchAtLoginMenuItem.state = launchAtLoginController.launchAtLogin ? NSOnState : NSOffState;
@@ -80,7 +88,7 @@
 - (void) loadMenu {
     // Clear out the hosts so we can start over
     NSUInteger n = [[menu itemArray] count];
-    for (int i=0;i<n-6;i++) {
+    for (int i=0;i<n-7;i++) {
         [menu removeItemAtIndex:0];
     }
     
@@ -103,7 +111,9 @@
     [self buildMenuForSimulator:self.simulators addToMenu:menu];
     
     //Load recent app
-    [self buildMenuForRecentsAddToMenu:menu];
+    BOOL recentAppDisabled = [[NSUserDefaults standardUserDefaults] boolForKey:RecentAppsOnKey];
+    if (!recentAppDisabled)
+      [self buildMenuForRecentsAddToMenu:menu];
 }
 
 - (void)buildMenuForSimulator:(NSArray *)simulatorArray addToMenu:(NSMenu *)m {
@@ -251,6 +261,22 @@
             [self.eraseMenuItem setEnabled:YES];
         });
     });
+}
+
+- (IBAction)toggleRecentApps:(id)sender
+{
+  NSMenuItem *menuItem = sender;
+  if ([menuItem.title rangeOfString:@"Disable"].length > 0)
+    menuItem.title = @"Enable Recent Apps";
+  else
+    menuItem.title = @"Disable Recent Apps";
+  
+  self.recentAppDisabled = !self.recentAppDisabled;
+  [[NSUserDefaults standardUserDefaults] setBool:self.recentAppDisabled forKey:RecentAppsOnKey];
+  [[NSUserDefaults standardUserDefaults] synchronize];
+  
+  [self loadMenu];
+  
 }
 
 - (IBAction)launchAtLogin:(id)sender {
