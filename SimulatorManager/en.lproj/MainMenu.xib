@@ -2,13 +2,13 @@
 <archive type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="8.00">
 	<data>
 		<int key="IBDocument.SystemTarget">1080</int>
-		<string key="IBDocument.SystemVersion">14A388a</string>
-		<string key="IBDocument.InterfaceBuilderVersion">6245</string>
+		<string key="IBDocument.SystemVersion">14A389</string>
+		<string key="IBDocument.InterfaceBuilderVersion">6250</string>
 		<string key="IBDocument.AppKitVersion">1343.14</string>
 		<string key="IBDocument.HIToolboxVersion">755.00</string>
 		<object class="NSMutableDictionary" key="IBDocument.PluginVersions">
 			<string key="NS.key.0">com.apple.InterfaceBuilder.CocoaPlugin</string>
-			<string key="NS.object.0">6245</string>
+			<string key="NS.object.0">6250</string>
 		</object>
 		<array key="IBDocument.IntegratedClassDependencies">
 			<string>NSArrayController</string>
@@ -129,6 +129,14 @@
 					</object>
 					<object class="NSMenuItem" id="605965567">
 						<reference key="NSMenu" ref="862705665"/>
+						<string key="NSTitle">Disable Recent Apps</string>
+						<string key="NSKeyEquiv"/>
+						<int key="NSMnemonicLoc">2147483647</int>
+						<reference key="NSOnImage" ref="35465992"/>
+						<reference key="NSMixedImage" ref="502551668"/>
+					</object>
+					<object class="NSMenuItem" id="586187136">
+						<reference key="NSMenu" ref="862705665"/>
 						<string key="NSTitle">Launch At Login</string>
 						<string key="NSKeyEquiv"/>
 						<int key="NSMnemonicLoc">2147483647</int>
@@ -209,19 +217,27 @@
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBActionConnection" key="connection">
-						<string key="label">launchAtLogin:</string>
-						<reference key="source" ref="1014"/>
-						<reference key="destination" ref="605965567"/>
-					</object>
-					<int key="connectionID">659</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBActionConnection" key="connection">
 						<string key="label">eraseAllSimulators:</string>
 						<reference key="source" ref="1014"/>
 						<reference key="destination" ref="547763140"/>
 					</object>
 					<int key="connectionID">663</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">launchAtLogin:</string>
+						<reference key="source" ref="1014"/>
+						<reference key="destination" ref="586187136"/>
+					</object>
+					<int key="connectionID">667</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">toggleRecentApps:</string>
+						<reference key="source" ref="1014"/>
+						<reference key="destination" ref="605965567"/>
+					</object>
+					<int key="connectionID">668</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
@@ -265,19 +281,19 @@
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
-						<string key="label">launchAtLoginMenuItem</string>
-						<reference key="source" ref="976324537"/>
-						<reference key="destination" ref="605965567"/>
-					</object>
-					<int key="connectionID">660</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
 						<string key="label">eraseMenuItem</string>
 						<reference key="source" ref="976324537"/>
 						<reference key="destination" ref="547763140"/>
 					</object>
 					<int key="connectionID">664</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">recentAppMenuItem</string>
+						<reference key="source" ref="976324537"/>
+						<reference key="destination" ref="605965567"/>
+					</object>
+					<int key="connectionID">669</int>
 				</object>
 			</array>
 			<object class="IBMutableOrderedSet" key="objectRecords">
@@ -367,6 +383,7 @@
 							<reference ref="605965567"/>
 							<reference ref="547763140"/>
 							<reference ref="158591610"/>
+							<reference ref="586187136"/>
 						</array>
 						<reference key="parent" ref="0"/>
 					</object>
@@ -404,7 +421,6 @@
 						<int key="objectID">658</int>
 						<reference key="object" ref="605965567"/>
 						<reference key="parent" ref="862705665"/>
-						<string key="objectName">Launch At Login</string>
 					</object>
 					<object class="IBObjectRecord">
 						<int key="objectID">661</int>
@@ -416,6 +432,12 @@
 						<int key="objectID">662</int>
 						<reference key="object" ref="158591610"/>
 						<reference key="parent" ref="862705665"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">665</int>
+						<reference key="object" ref="586187136"/>
+						<reference key="parent" ref="862705665"/>
+						<string key="objectName">Launch At Login</string>
 					</object>
 				</array>
 			</object>
@@ -441,12 +463,13 @@
 				<string key="658.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 				<string key="661.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 				<string key="662.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
+				<string key="665.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 			</dictionary>
 			<dictionary class="NSMutableDictionary" key="unlocalizedProperties"/>
 			<nil key="activeLocalization"/>
 			<dictionary class="NSMutableDictionary" key="localizations"/>
 			<nil key="sourceID"/>
-			<int key="maxID">664</int>
+			<int key="maxID">669</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<array class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -479,6 +502,7 @@
 						<string key="launchAtLogin:">id</string>
 						<string key="quit:">id</string>
 						<string key="showAbout:">id</string>
+						<string key="toggleRecentApps:">id</string>
 					</dictionary>
 					<dictionary class="NSMutableDictionary" key="actionInfosByName">
 						<object class="IBActionInfo" key="eraseAllSimulators:">
@@ -497,10 +521,15 @@
 							<string key="name">showAbout:</string>
 							<string key="candidateClassName">id</string>
 						</object>
+						<object class="IBActionInfo" key="toggleRecentApps:">
+							<string key="name">toggleRecentApps:</string>
+							<string key="candidateClassName">id</string>
+						</object>
 					</dictionary>
 					<dictionary class="NSMutableDictionary" key="outlets">
 						<string key="eraseMenuItem">NSMenuItem</string>
 						<string key="launchAtLoginMenuItem">NSMenuItem</string>
+						<string key="recentAppMenuItem">NSMenuItem</string>
 					</dictionary>
 					<dictionary class="NSMutableDictionary" key="toOneOutletInfosByName">
 						<object class="IBToOneOutletInfo" key="eraseMenuItem">
@@ -509,6 +538,10 @@
 						</object>
 						<object class="IBToOneOutletInfo" key="launchAtLoginMenuItem">
 							<string key="name">launchAtLoginMenuItem</string>
+							<string key="candidateClassName">NSMenuItem</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="recentAppMenuItem">
+							<string key="name">recentAppMenuItem</string>
 							<string key="candidateClassName">NSMenuItem</string>
 						</object>
 					</dictionary>
@@ -604,10 +637,6 @@
 		<int key="IBDocument.localizationMode">0</int>
 		<string key="IBDocument.TargetRuntimeIdentifier">IBCocoaFramework</string>
 		<bool key="IBDocument.previouslyAttemptedUpgradeToXcode5">NO</bool>
-		<object class="NSMutableDictionary" key="IBDocument.PluginDeclaredDependencyDefaults">
-			<string key="NS.key.0">com.apple.InterfaceBuilder.CocoaPlugin.macosx</string>
-			<real value="1080" key="NS.object.0"/>
-		</object>
 		<object class="NSMutableDictionary" key="IBDocument.PluginDeclaredDevelopmentDependencies">
 			<string key="NS.key.0">com.apple.InterfaceBuilder.CocoaPlugin.InterfaceBuilder3</string>
 			<integer value="4600" key="NS.object.0"/>

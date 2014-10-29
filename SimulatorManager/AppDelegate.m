@@ -15,6 +15,9 @@
 @property (assign, nonatomic) BOOL recentAppUpdate;
 @property (weak) IBOutlet NSMenuItem *eraseMenuItem;
 
+@property (nonatomic, assign) BOOL recentAppDisabled;
+@property (nonatomic, weak) IBOutlet NSMenuItem *recentAppMenuItem;
+
 @end
 @implementation AppDelegate
 - (void)applicationDidFinishLaunching:(NSNotification *)notification {
@@ -46,7 +49,12 @@
     
     [statusItem setImage:image];
     [statusItem setAlternateImage:alternateImage];
-    
+  
+    self.recentAppDisabled = [[NSUserDefaults standardUserDefaults] boolForKey:RecentAppsOnKey];
+    if (self.recentAppDisabled)
+      self.recentAppMenuItem.title = @"Enable Recent Apps";
+    else
+      self.recentAppMenuItem.title = @"Disable Recent Apps";
 
     launchAtLoginController = [[LaunchAtLoginController alloc] init];
     self.launchAtLoginMenuItem.state = launchAtLoginController.launchAtLogin ? NSOnState : NSOffState;
@@ -80,7 +88,7 @@
 - (void) loadMenu {
     // Clear out the hosts so we can start over
     NSUInteger n = [[menu itemArray] count];
-    for (int i=0;i<n-6;i++) {
+    for (int i=0;i<n-7;i++) {
         [menu removeItemAtIndex:0];
     }
     
@@ -103,7 +111,9 @@
     [self buildMenuForSimulator:self.simulators addToMenu:menu];
     
     //Load recent app
-    [self buildMenuForRecentsAddToMenu:menu];
+    BOOL recentAppDisabled = [[NSUserDefaults standardUserDefaults] boolForKey:RecentAppsOnKey];
+    if (!recentAppDisabled)
+      [self buildMenuForRecentsAddToMenu:menu];
 }
 
 - (void)buildMenuForSimulator:(NSArray *)simulatorArray addToMenu:(NSMenu *)m {
@@ -115,14 +125,25 @@
         [menuItem setTitle:[simulator.name stringByAppendingFormat:@" (%@)", simulator.runtimeVersion]];
         [menuItem setSubmenu:subMenu];
         menuItem.target = self;
-        menuItem.action = @selector(openSimulatorFolder:);
+        menuItem.action = nil;//@selector(openSimulatorFolder:);
         [m insertItem:menuItem atIndex:menuIndex];
         [self buildApplicationMenu:[simulator applications] addToMenu:subMenu simulator:simulator];
     }
 }
 - (void)buildApplicationMenu:(NSArray *)apps addToMenu:(NSMenu *)m simulator:(Simulator *)simulator {
     NSFileManager *fileManager = [NSFileManager defaultManager];
-    
+  
+  NSMenuItem* menuItem = [[NSMenuItem alloc] init];
+  [menuItem setTitle:@"Simulator Folder"];
+  [menuItem setRepresentedObject:simulator];
+  menuItem.target = self;
+  menuItem.action = @selector(openSimulatorFolder:);
+  [m addItem:menuItem];
+  NSString *rootPath = simulator.path;
+  if (![fileManager fileExistsAtPath:rootPath]) {
+    menuItem.image  = [NSImage imageNamed:@"warning"];
+  }
+  
     {
         NSMenuItem* menuItem = [[NSMenuItem alloc] init];
         [menuItem setTitle:@"App Data Folder"];
@@ -134,7 +155,7 @@
         [m addItem:separator];
         NSString *dataPath = [simulator appDataPath:nil];
         if (![fileManager fileExistsAtPath:dataPath]) {
-            menuItem.image  = [NSImage imageNamed:@"Warning"];
+            menuItem.image  = [NSImage imageNamed:@"warning"];
         }
     }
     
@@ -149,7 +170,7 @@
         [m addItem:menuItem];
         NSString *dataPath = [app dataPath];
         if (![fileManager fileExistsAtPath:dataPath]) {
-            menuItem.image  = [NSImage imageNamed:@"Warning"];
+            menuItem.image  = [NSImage imageNamed:@"warning"];
         }
         
     }
@@ -251,6 +272,22 @@
             [self.eraseMenuItem setEnabled:YES];
         });
     });
+}
+
+- (IBAction)toggleRecentApps:(id)sender
+{
+  NSMenuItem *menuItem = sender;
+  if ([menuItem.title rangeOfString:@"Disable"].length > 0)
+    menuItem.title = @"Enable Recent Apps";
+  else
+    menuItem.title = @"Disable Recent Apps";
+  
+  self.recentAppDisabled = !self.recentAppDisabled;
+  [[NSUserDefaults standardUserDefaults] setBool:self.recentAppDisabled forKey:RecentAppsOnKey];
+  [[NSUserDefaults standardUserDefaults] synchronize];
+  
+  [self loadMenu];
+  
 }
 
 - (IBAction)launchAtLogin:(id)sender {
