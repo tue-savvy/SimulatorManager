@@ -13,6 +13,8 @@ FOUNDATION_EXPORT NSString *const RecentAppUpdateNotification;
 @class Simulator;
 @class SimulatorApp;
 @interface RecentAppsManager : NSObject
+@property (strong, nonatomic) NSArray *simulators;
+- (instancetype)initWithSimulators:(NSArray *)simulators;
 - (void)addRecentApp:(SimulatorApp *)app;
 - (NSArray *)recentApps;
 @end

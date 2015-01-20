@@ -10,14 +10,17 @@
 @class Simulator;
 @interface SimulatorApp : NSObject
 @property (nonatomic, strong) NSString *name;
-@property (nonatomic, strong) NSString *path;
 @property (nonatomic, strong) NSImage *appIcon;
 @property (nonatomic, strong) NSString *bundleID;
-@property (nonatomic, strong) Simulator *simulator;
+@property (nonatomic, weak) Simulator *simulator;
+@property (strong, nonatomic) NSString *bundlePath;
+@property (strong, nonatomic) NSString *sandboxPath;
 
-- (instancetype)initWithPath:(NSString *)path simulator:(Simulator *)simulator;
+- (instancetype)initWithBundleID:(NSString *)bundleID simulator:(Simulator *)simulator;
 
-- (NSString *)dataPath;
-- (NSString *)bundlePath;
+- (void) updateFromLastLaunchMapInfo: (NSDictionary *) inMapInfo;
+- (void) updateFromAppStateInfo: (NSDictionary *) inStateInfo;
+- (void) refinePaths;
 
+- (BOOL) hasValidPath;
 @end

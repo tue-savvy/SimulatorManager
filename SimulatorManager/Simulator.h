@@ -19,8 +19,8 @@
 @property (nonatomic, strong) NSString *path;
 
 - (instancetype)initWithPath:(NSString *)path;
-
+- (void)setNeedRefreshAppList;
 - (NSArray *)applications;
-- (NSString *)appDataPath:(SimulatorApp *)app;
+- (NSString *)appDataPath;
 - (NSString *)runtimeVersion;
 @end

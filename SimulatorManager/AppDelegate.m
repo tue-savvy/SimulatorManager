@@ -78,7 +78,7 @@
 - (void)recentAppUpdate:(NSNotification *)notification {
     self.recentAppUpdate = YES;
 }
-- (void)menuWillOpen:(NSMenu *)menu {
+- (void)menuNeedsUpdate:(NSMenu *)menu {
     // Check when the config was last modified
     if ( [self needUpdateMenu]) {
         [self loadMenu];
@@ -91,8 +91,6 @@
     for (int i=0;i<n-7;i++) {
         [menu removeItemAtIndex:0];
     }
-    
-    
     
     //Load Simulator
     NSFileManager *fm = [NSFileManager defaultManager];
@@ -107,6 +105,7 @@
     }
 
     self.simulators = simulators;
+    self.recentManager.simulators = simulators;
     [self.simulators sortUsingDescriptors:@[[NSSortDescriptor sortDescriptorWithKey:@"name" ascending:YES]]];
     [self buildMenuForSimulator:self.simulators addToMenu:menu];
     
@@ -133,30 +132,31 @@
 - (void)buildApplicationMenu:(NSArray *)apps addToMenu:(NSMenu *)m simulator:(Simulator *)simulator {
     NSFileManager *fileManager = [NSFileManager defaultManager];
   
-  NSMenuItem* menuItem = [[NSMenuItem alloc] init];
-  [menuItem setTitle:@"Simulator Folder"];
-  [menuItem setRepresentedObject:simulator];
-  menuItem.target = self;
-  menuItem.action = @selector(openSimulatorFolder:);
-  [m addItem:menuItem];
-  NSString *rootPath = simulator.path;
-  if (![fileManager fileExistsAtPath:rootPath]) {
-    menuItem.image  = [NSImage imageNamed:@"warning"];
-  }
+      NSMenuItem* menuItem = [[NSMenuItem alloc] init];
+      [menuItem setTitle:@"Simulator Folder"];
+      [menuItem setRepresentedObject:simulator];
+      menuItem.target = self;
+      menuItem.action = @selector(openSimulatorFolder:);
+      [m addItem:menuItem];
+      NSString *rootPath = simulator.path;
+      if (![fileManager fileExistsAtPath:rootPath]) {
+        menuItem.image  = [NSImage imageNamed:@"warning"];
+      }
   
     {
-        NSMenuItem* menuItem = [[NSMenuItem alloc] init];
-        [menuItem setTitle:@"App Data Folder"];
-        [menuItem setRepresentedObject:simulator];
-        menuItem.target = self;
-        menuItem.action = @selector(openSimulatorDataFolder:);
-        [m addItem:menuItem];
+        
+        NSString *dataPath = [simulator appDataPath];
+        if ([fileManager fileExistsAtPath:dataPath]) {
+            NSMenuItem* menuItem = [[NSMenuItem alloc] init];
+            [menuItem setTitle:@"App Data Folder"];
+            [menuItem setRepresentedObject:simulator];
+            menuItem.target = self;
+            menuItem.action = @selector(openSimulatorDataFolder:);
+            [m addItem:menuItem];
+        }
+        
         NSMenuItem *separator = [NSMenuItem separatorItem];
         [m addItem:separator];
-        NSString *dataPath = [simulator appDataPath:nil];
-        if (![fileManager fileExistsAtPath:dataPath]) {
-            menuItem.image  = [NSImage imageNamed:@"warning"];
-        }
     }
     
     apps = [apps sortedArrayUsingDescriptors:@[[NSSortDescriptor sortDescriptorWithKey:@"name" ascending:YES selector:@selector(caseInsensitiveCompare:)]]];
@@ -168,7 +168,7 @@
         menuItem.target = self;
         menuItem.action = @selector(openSimulatorApp:);
         [m addItem:menuItem];
-        NSString *dataPath = [app dataPath];
+        NSString *dataPath = [app sandboxPath];
         if (![fileManager fileExistsAtPath:dataPath]) {
             menuItem.image  = [NSImage imageNamed:@"warning"];
         }
@@ -216,7 +216,7 @@
 
 - (void)openSimulatorApp:(NSMenuItem *)menuItem {
     SimulatorApp *simulatorApp = menuItem.representedObject;
-    NSString *appDataPath = simulatorApp.dataPath;
+    NSString *appDataPath = simulatorApp.sandboxPath;
     if (appDataPath) {
         [[NSWorkspace sharedWorkspace] openURL:[NSURL fileURLWithPath:appDataPath]];
         [self.recentManager addRecentApp:simulatorApp];
@@ -233,7 +233,7 @@
 
 - (void)openSimulatorDataFolder:(NSMenuItem *)menuItem {
     Simulator *simulator = menuItem.representedObject;
-    [[NSWorkspace sharedWorkspace] openURL:[NSURL fileURLWithPath:[simulator appDataPath:nil]]];
+    [[NSWorkspace sharedWorkspace] openURL:[NSURL fileURLWithPath:[simulator appDataPath]]];
 }
 - (IBAction)eraseAllSimulators:(id)sender {
     NSAlert *alert = [[NSAlert alloc] init];

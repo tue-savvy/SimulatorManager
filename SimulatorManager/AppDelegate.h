@@ -15,6 +15,4 @@
     LaunchAtLoginController *launchAtLoginController;
 }
 
-- (void)menuWillOpen:(NSMenu *)menu;
-
 @end

@@ -20,8 +20,20 @@ NSString *const RecentAppUpdateNotification = @"RecentAppUpdateNotification";
 @interface RecentAppsManager()
 @property (nonatomic, strong) NSMutableArray *recentData;
 @property (nonatomic, strong) NSMutableArray *recentSimulatorApps;
+
 @end
 @implementation RecentAppsManager
+- (instancetype)initWithSimulators:(NSArray *)simulators {
+    self  = [super init];
+    if (self) {
+        self.simulators = simulators;
+    }
+    return self;
+}
+- (void)setSimulators:(NSArray *)simulators {
+    _simulators = simulators;
+    self.recentData = nil;//Reset it to nil to refresh simulatos
+}
 - (void)_loadRecentData {
     if (self.recentData) return;
     
@@ -31,26 +43,36 @@ NSString *const RecentAppUpdateNotification = @"RecentAppUpdateNotification";
     } else {
         self.recentData = [NSMutableArray array];
     }
-    
+    //TODO: update this
     self.recentSimulatorApps = [NSMutableArray array];
     for (NSDictionary *dict in self.recentData) {
         NSString *simulatorPath = dict[@"SimulatorPath"];
-        NSString *appPath = dict[@"AppPath"];
-        Simulator *simulator = [[Simulator alloc] initWithPath:simulatorPath];
-        SimulatorApp *app = [[SimulatorApp alloc] initWithPath:appPath simulator:simulator];
-        [self.recentSimulatorApps addObject:app];
+        NSString *appBundleID = dict[@"AppBundleID"];
+        for (Simulator *simulator in self.simulators) {
+            if ([simulator.path isEqualToString:simulatorPath]) {
+                for (SimulatorApp *app in simulator.applications) {
+                    if ([app.bundleID isEqualToString:appBundleID]) {
+                        [self.recentSimulatorApps addObject:app];
+                        break;
+                    }
+                }
+                break;
+            }
+        }
     }
 }
 
 - (void)addRecentApp:(SimulatorApp *)app {
     [self _loadRecentData];
     NSString *simulatorPath = app.simulator.path;
-    NSString *appPath = app.path;
+    NSString *appBundleID = app.bundleID;
+    
+    if (!simulatorPath && !appBundleID) return;
     
     //Check for existing
     NSInteger index = 0;
     for (NSDictionary *recentDict in self.recentData) {
-        if ([recentDict[@"SimulatorPath"] isEqual:simulatorPath] && [recentDict[@"AppPath"] isEqual:appPath]) {
+        if ([recentDict[@"SimulatorPath"] isEqual:simulatorPath] && [recentDict[@"AppBundleID"] isEqual:appBundleID]) {
             if (index == 0) return;
             
             //move recent to first position
@@ -72,7 +94,7 @@ NSString *const RecentAppUpdateNotification = @"RecentAppUpdateNotification";
     //Insert to recent list
     NSMutableDictionary *dict = [NSMutableDictionary dictionary];
     dict[@"SimulatorPath"] = simulatorPath;
-    dict[@"AppPath"] = appPath;
+    dict[@"AppBundleID"] = appBundleID;
     [self.recentData insertObject:dict atIndex:0];
     [self.recentSimulatorApps insertObject:app atIndex:0];
     
